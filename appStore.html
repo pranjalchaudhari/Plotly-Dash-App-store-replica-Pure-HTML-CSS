@@ -1,0 +1,2552 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+body{
+    color: rgb(32, 41, 61);
+    font-family: "Open Sans", sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+}
+.column {
+  float: left;
+  width: 32%;
+  height: 400px;
+  padding: 10px;
+  margin: 0.5%;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  background-color:#f1f1f1;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.btn {
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+.image:hover {opacity: 0.2;cursor: pointer;}
+
+
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+.openApp{
+    background-color: rgb(80, 103, 132);
+    color: white;
+}
+</style>
+</head>
+<body>
+What to expect?
+<ol>
+    <li>List / Grid view switch</li>
+    <li>Search bar filtering datalils
+    <li>Image click redirects to app</li>
+    <li>Name click opens a pop-up modal</li>
+</ol>
+<div id="btnContainer" style="margin:0 50px 0 10px;">
+  <button class="btn" onclick="listView()"><i class="fa fa-bars"></i> List</button> 
+  <button class="btn active" onclick="gridView()"><i class="fa fa-th-large"></i> Grid</button>
+  <input id="filter" type="text" placeholder="Search here" style="float:right;height: 30px;width: 25%;">
+</div>
+<br>
+<div id="main_containt"></div>
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="popupDetails1" style="width: 60%;display: inline-block;"></div>
+        <div id="popupDetails2" style="width: 38%;display: inline-block;padding-left: 20px;vertical-align: top;">
+            <div>
+                <h2 class="popUpHeader"></h2>
+            </div>
+            <div id="description"></div>
+            <div>
+                <button id="openApp" class="openApp" style="display: block;margin: 0 auto;width: 70%;height: 30px;cursor: pointer;"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Get the elements with class="column"
+var elements = document.getElementsByClassName("column");
+
+// Declare a loop variable
+var i;
+
+// List View
+function listView() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].getElementsByTagName('img')[0].style.display = 'none';
+    elements[i].style.width = "99%";
+    elements[i].style.height = "10%";
+  }
+}
+
+// Grid View
+function gridView() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].getElementsByTagName('img')[0].style.display = 'block'
+    elements[i].style.width = "32%";
+    elements[i].style.height = "400px";
+  }
+}
+
+/* Optional: Add active class to the current button (highlight it) */
+var container = document.getElementById("btnContainer");
+var btns = container.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function() {
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+
+$("#filter").keyup(function() {
+  var filter = $(this).val(),
+      count = 0;
+  $('#main_containt div').each(function() {
+    if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+      $(this).hide();
+
+    } else {
+      $(this).show();
+      count++;
+    }
+
+  });
+
+});
+
+
+var dummy_data = [
+  {
+    "name": "ddk-clinical-trial-dashboard",
+    "thumbnailUrl": "/Manager/apps_data/ddk-clinical-trial-dashboard/thumbnail_fa939dc2-a79a-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/ddk-clinical-trial-dashboard",
+    "metadata": {
+      "title": "Clinical Trial Report",
+      "description": "<p>This dashboard provides an interface to visualize patient data from clinical trials.</p>\n<p>This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Pharma,Design Kit,Snapshot Engine,Job Queue,Report",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": 1,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-financial-report",
+    "thumbnailUrl": "/Manager/apps_data/dash-financial-report/thumbnail_e8f2925a-a79d-11eb-989d-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-financial-report",
+    "metadata": {
+      "title": "Financial Report",
+      "description": "<p>This app recreates the look and feel of a financial report with Dash and Plotly. You can hover over data points to visualize chart interactivity, or customize this report with more Dash components.&nbsp;</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-financial-report\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-financial-report\">R</a>.</p>",
+      "tags": "Financial,Report",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 2,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "self-driving",
+    "thumbnailUrl": "/Manager/apps_data/self-driving/thumbnail_7a139e5a-a799-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/self-driving",
+    "metadata": {
+      "title": "Real-Time Object Detection",
+      "description": "<p><strong>Dash Enterprise is the last mile for deploying and scaling AI initiatives.</strong> This app shows how Dash can be used to execute AI models like the YOLO v3 object-detection algorithm in real-time. <a href=\"https://medium.com/@plotlygraphs/productionizing-object-detection-models-with-dash-enterprise-dba1c9402c2f\">Check out this article</a> for full details.</p>\n<p><br></p>\n<p>To learn more about this app and how Dash Enterprise can help with your AI initiatives, please <a href=\"https://plotly.com/get-demo/\">reach out to get a demo</a>.</p>",
+      "tags": "Image Processing,AI,ML,Computer Vision,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": 3,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-manufacture-spc-dashboard",
+    "thumbnailUrl": "/Manager/apps_data/dash-manufacture-spc-dashboard/thumbnail_2f3075f6-a79f-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-manufacture-spc-dashboard",
+    "metadata": {
+      "title": "Manufacturing SPC Dashboard",
+      "description": "<p>A dashboard for monitoring real-time process quality along manufacture production line.</p>\n<p>Find this app <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-manufacture-spc-dashboard\">source code</a>.</p>",
+      "tags": "Streaming,DAQ,Manufacturing",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 4,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-wind-streaming",
+    "thumbnailUrl": "/Manager/apps_data/dash-wind-streaming/thumbnail_3ce26690-a7a0-11eb-a1a2-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-wind-streaming",
+    "metadata": {
+      "title": "Wind Speed Dashboard for Wind Farm Location Prospecting",
+      "description": "<p>This app continually queries a SQL database and displays live charts of wind speed and wind direction. This is useful for scoping out site locations for wind turbine farms and wind sensor IoTs. In Dash, the <a href=\"https://dash.plot.ly/live-upates\"><u>dcc.Interval</u></a> component can be used to update any element on a recurring interval.&nbsp;</p>\n<p>This app's source code is available in <a href=\" https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-wind-streaming\">Python</a> and <a href=\" https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-wind-streaming\">R</a>.</p>",
+      "tags": "Streaming,SQL,Energy",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 4,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-world-cell-towers",
+    "thumbnailUrl": "/Manager/apps_data/dash-world-cell-towers/thumbnail_b6f9fd42-3c96-11ea-b1b1-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-world-cell-towers",
+    "metadata": {
+      "title": "World Cell Towers",
+      "description": "<p>This dataset contains over 40 million rows of data, each row including several cell tower features in addition to the latitude/longitude location of the tower. To handle this fairly large dataset, this app makes use of <a href=\"https://dask.org/\" rel=\"nofollow\">Dask</a> for parallel processing, and <a href=\"https://datashader.org/\" rel=\"nofollow\">Datashader</a> for server side rendering.</p>\n<p><br></p>\n<p>The app's source code is available in <a href=\"https://github.com/plotly/dash-world-cell-towers\">Python</a>.</p>",
+      "tags": "Geospatial,Datashader,Dask,Telecom",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-image-segmentation",
+    "thumbnailUrl": "/Manager/apps_data/dash-image-segmentation/thumbnail_c6d1b6a0-a79e-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-image-segmentation",
+    "metadata": {
+      "title": "Interactive Image Segmentation",
+      "description": "<p>Use machine learning to segment an image by using a random forest classifier. View the <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-image-segmentation\">Python code</a>.</p>",
+      "tags": "ML,Healthcare,AI,Image Processing,Computer Vision",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 6,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-aerosandbox",
+    "thumbnailUrl": "/Manager/apps_data/dash-aerosandbox/thumbnail_20f44838-a7a3-11eb-903f-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-aerosandbox",
+    "metadata": {
+      "title": "Aircraft CFD",
+      "description": "<p>An interactive demo of AeroSandbox, a Python package for aircraft design optimization that leverages modern tools for reverse-mode automatic differentiation and large-scale design optimization.</p>\n<p><br></p>\n<p><a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-aerosandbox\">Source code</a></p>",
+      "tags": "Aerospace,CFD",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 7,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-interest-rate",
+    "thumbnailUrl": "/Manager/apps_data/dash-interest-rate/thumbnail_3da80ce4-756c-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-interest-rate",
+    "metadata": {
+      "title": "Interest Rate Modeling",
+      "description": "<p>Did you know that Dash easily connects to Snowflake WHs in just 25 lines of Python? This app shows how to query from a DB of 1.5M loan records and train a Ridge model to predict interest rates.</p>\n<p><br></p>\n<p>Join the conversation: <a href=\"https://community.plotly.com/t/show-tell-dash-interest-rate-regression-using-snowflake/42580\">Community Post</a></p>\n<p>Interested in learning more about Dash apps using Snowflake? <a href=\"https://plotly.com/get-demo/\">Get a demo</a>.</p>",
+      "tags": "Snowflake,AI,ML,SQL,scikit-learn,Insurance,Financial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 8,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-pivottable",
+    "thumbnailUrl": "/Manager/apps_data/dash-pivottable/thumbnail_b85e7600-a7a1-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-pivottable",
+    "metadata": {
+      "title": "Pivottable Demo",
+      "description": "<p>This is a simple demo of <a href=\"https://github.com/plotly/dash-pivottable\">Dash Pivottable</a>, which takes less than 50 lines to write. You can find it <a href=\"https://github.com/plotly/dash-pivottable/blob/master/usage.py\">here</a>.</p>",
+      "tags": "Financial,Insurance",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 10,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-brain-viewer",
+    "thumbnailUrl": "/Manager/apps_data/dash-brain-viewer/thumbnail_0a25ec8e-a7a2-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-brain-viewer",
+    "metadata": {
+      "title": "Brain Surface Viewer",
+      "description": "<p>Dash app for viewing brain surfaces saved as MNI files. Add interactive labels to points on the brain surface and change the surface colorscale.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-brain-viewer\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-brain-viewer\">R</a>.</p>",
+      "tags": "Biotechnology,3d",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 11,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-clinical-analytics",
+    "thumbnailUrl": "/Manager/apps_data/dash-clinical-analytics/thumbnail_abe4c906-9f74-11e9-a7ab-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-clinical-analytics",
+    "metadata": {
+      "title": "Clinical Analytics Dashboard",
+      "description": "<p>This dashboard allows you to explore clinic patient volume by time of the day, waiting time and care score. Drill down into high-volume days to view how the busy environment may have affected patient experience.<br>\nFind this source code from <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-clinical-analytics\">https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-clinical-analytics</a></p>",
+      "tags": "Pharma,Healthcare",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 11,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-medical-provider-charges",
+    "thumbnailUrl": "/Manager/apps_data/dash-medical-provider-charges/thumbnail_982f5ae0-9da6-11e9-8982-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-medical-provider-charges",
+    "metadata": {
+      "title": "Medical Provider Charges",
+      "description": "<p>This app creates a dashboard to visualize medical provider charges/costs from US hospitals and clinics.</p>\n<p>Select state, cost metric and region to visualize average charges or payments(for all medical procedures) on the map. Click on individual hospital from map to highlight its procedure-specific charges on the bottom chart. You may also click or select individual data from bottom plot to view its geological location, as well as charges/payment summaries from datatable.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-medical-provider-charges\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-medical-provider-charges\">R</a>.&nbsp;</p>",
+      "tags": "Healthcare,Geospatial,AI",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 11,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-opioid-epidemic",
+    "thumbnailUrl": "/Manager/apps_data/dash-opioid-epidemic/thumbnail_211de320-a7a1-11eb-903f-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-opioid-epidemic",
+    "metadata": {
+      "title": "US Opioid Epidemic",
+      "description": "<p>An interactive dashboard to explore the effect of the opioid epidemic in North America.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-opioid-epidemic\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-opiod-endemic\">R</a>.</p>",
+      "tags": "Pharma,Healthcare",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 11,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-web-trader",
+    "thumbnailUrl": "/Manager/apps_data/dash-web-trader/thumbnail_a763a354-a79f-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-web-trader",
+    "metadata": {
+      "title": "FOREX Web Trader",
+      "description": "<p>This is a demo of the Dash interactive Python framework developed by Plotly.</p>\n<p>This dash app continuously queries csv files and updates Ask and Bid prices for major currency pairs as well as Stock Charts. You can also virtually buy and sell stocks and see the profit updates.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-web-trader\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-web-trader\">R</a>. &nbsp;&nbsp;</p>",
+      "tags": "Streaming,Financial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 11,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-phylogeny",
+    "thumbnailUrl": "/Manager/apps_data/dash-phylogeny/thumbnail_dca4e06a-3616-11ea-9ae6-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-phylogeny",
+    "metadata": {
+      "title": "Phylogeny Tree",
+      "description": "<p>Interactively explore the propagation of six viruses, by time and/or by location. In the online app, you can select a virus to display its evolution as a phylogeny tree, along with a map and time series of the virus's global spread.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-phylogeny\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-phylogeny\">R</a>.</p>",
+      "tags": "Healthcare,COVID,Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 12,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-image-processing",
+    "thumbnailUrl": "/Manager/apps_data/dash-image-processing/thumbnail_199e3ff6-a7a5-11eb-a1a2-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-image-processing",
+    "metadata": {
+      "title": "Image Processing",
+      "description": "<p>A dash app which wraps Pillow for interactive image processing, this app abstracts all the operations through an easy-to-use GUI.</p>\n<p>Find this app source code from<a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-image-processing\"> https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-image-processing</a>.</p>",
+      "tags": "AI,ML,Image Processing,Semiconductor,Healthcare",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 14,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-svm",
+    "thumbnailUrl": "/Manager/apps_data/dash-svm/thumbnail_e8390202-a7a4-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-svm",
+    "metadata": {
+      "title": "Support Vector Machine",
+      "description": "<p>This app lets you explore support vector clustering (a type of support vector machine) with UI input parameters. Toy datasets and useful ML metrics plots are included. It is fully written in Dash + scikit-learn.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-svm\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-svm\">R</a>.</p>",
+      "tags": "ML,AI,scikit-learn,SVM",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 14,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-drug-discovery",
+    "thumbnailUrl": "/Manager/apps_data/dash-drug-discovery/thumbnail_442930fa-a7a5-11eb-903f-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-drug-discovery",
+    "metadata": {
+      "title": "Drug Discovery",
+      "description": "<p>This app displays a description of the drug as you hover over points in the graph.</p>\n<p>Selecting drugs in the dropdown highlights their position in the chart and appends their symbol in the table below.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-drug-discovery\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-drug-discovery\">R</a>.</p>",
+      "tags": "Pharma,3d,Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 15,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-live-model-training",
+    "thumbnailUrl": "/Manager/apps_data/dash-live-model-training/thumbnail_cecd3aee-a7a5-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-live-model-training",
+    "metadata": {
+      "title": "Live Model Training",
+      "description": "<p>This real-time visualization app monitors core metrics of your Tensorflow graphs during the training so that you can quickly detect anomalies within your model.</p>\n<p>Find this app source code from <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-live-model-training\">https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-live-model-training</a>.</p>",
+      "tags": "ML,AI,TensorFlow,Streaming",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 15,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-nlp",
+    "thumbnailUrl": "/Manager/apps_data/dash-nlp/thumbnail_6fc0cfd8-a7a1-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-nlp",
+    "metadata": {
+      "title": "Bank Complaints NLP",
+      "description": "<p>An example of how plotly's Dash framework can be used for Natural Language Processing (NLP). This app's source code in available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-nlp\">Python</a>.</p>",
+      "tags": "AI,ML,NLP,Financial,Insurance,Report,t-SNE",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 15,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-uber-rides-demo",
+    "thumbnailUrl": "/Manager/apps_data/dash-uber-rides-demo/thumbnail_39a608ce-a7a0-11eb-903f-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-uber-rides-demo",
+    "metadata": {
+      "title": "New York Uber Rides",
+      "description": "<p>This is a demo of the Dash interactive Python framework developed by <a href=\"https://plot.ly/\" rel=\"nofollow\">Plotly</a>.&nbsp;</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-uber-rides-demo\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-uber-rides\">R</a>.&nbsp;</p>",
+      "tags": "Transportation,Geospatial,Shipping & Delivery",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 15,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-object-detection",
+    "thumbnailUrl": "/Manager/apps_data/dash-object-detection/thumbnail_53167650-b309-11e9-8925-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-object-detection",
+    "metadata": {
+      "title": "Object Detection Explorer",
+      "description": "<p>This object-detection app provides real-time visualizations about what's happening inside a complex video.&nbsp;</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-object-detection\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-object-detection\">R</a>.&nbsp;</p>",
+      "tags": "AI,ML,Computer Vision,TensorFlow,Video,Manufacturing,Automotive,Aerospace",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": 16,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-tsne",
+    "thumbnailUrl": "/Manager/apps_data/dash-tsne/thumbnail_ce8852a6-b235-11e9-817c-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-tsne",
+    "metadata": {
+      "title": "t-SNE Explorer",
+      "description": "<p>T-SNE is a visualization algorithm that projects your high-dimensional data into a 2D or 3D space so that you can explore the spatial distribution of your data.This t-SNE Explorer lets you interactively explore iconic image datasets such as MNIST, and state-of-the-art word embeddings such as GloVe, with all the computation done ahead of time.&nbsp;</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-tsne\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-tsne\">R</a>.</p>",
+      "tags": "AI,ML,Computer Vision,scikit-learn,Financial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 17,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-daq-satellite-dashboard",
+    "thumbnailUrl": "/Manager/apps_data/dash-daq-satellite-dashboard/thumbnail_46dead90-d0a9-11e9-b2e2-0242ac110043.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-daq-satellite-dashboard",
+    "metadata": {
+      "title": "Satellite Dashboard",
+      "description": "<p>View the app source code in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-daq-satellite-dashboard\">Python</a>.&nbsp;</p>",
+      "tags": "Streaming,Geospatial,DAQ,Telecom,Aerospace",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 17.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-circos",
+    "thumbnailUrl": "/Manager/apps_data/dash-circos/thumbnail_bb8e946a-42dd-11ea-b7f6-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-circos",
+    "metadata": {
+      "title": "Dash Bio Circos Demo",
+      "description": "<p>Circos is a circular visualization of data, and can be used to highlight relationships between objects in a dataset (e.g., genes that are located on different chromosomes in the genome of an organism.View the app source code in <a href=\"https://github.com/plotly/dash-bio/blob/master/tests/dashbio_demos/dash-circos/app.py\">Python</a>.</p>",
+      "tags": "Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 18,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-floris-flow",
+    "thumbnailUrl": "/Manager/apps_data/dash-floris-flow/thumbnail_536b7216-756a-11eb-903f-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-floris-flow",
+    "metadata": {
+      "title": "Wind Turbine Flow Modelling with FLORIS",
+      "description": "<p>Get the <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-floris-flow\">source code</a>.</p>",
+      "tags": "VTK,Energy,Aerospace",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 18,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-multipage-report",
+    "thumbnailUrl": "/Manager/apps_data/dash-multipage-report/thumbnail_2ad7ea00-a7a6-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-multipage-report",
+    "metadata": {
+      "title": "Multipage Report",
+      "description": "<p>This app demonstrates a multipage financial interactive report.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-multipage-report\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-multipage-report\">R</a>.</p>",
+      "tags": "Financial,Report",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": 18,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-alignment-chart",
+    "thumbnailUrl": "/Manager/apps_data/dash-alignment-chart/thumbnail_08a73506-b862-11e9-817c-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-alignment-chart",
+    "metadata": {
+      "title": "Alignment Chart",
+      "description": "<p>View multiple sequence alignments of genomic or protenomic sequences. View the app source code in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-alignment-chart\">Python</a>.</p>",
+      "tags": "Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "shammamah@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-clustergram",
+    "thumbnailUrl": "/Manager/apps_data/dash-clustergram/thumbnail_78b2c684-b863-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-clustergram",
+    "metadata": {
+      "title": "Clustergram",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-clustergram\">Python</a>.</p>",
+      "tags": "Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-forna-container",
+    "thumbnailUrl": "/Manager/apps_data/dash-forna-container/thumbnail_9e486c92-f50c-11e9-a605-0242ac11007d.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-forna-container",
+    "metadata": {
+      "title": "Forna Container",
+      "description": "<p>RNA secondary structure visualization. This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-forna-container\">Python</a>.</p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "shammamah@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-ideogram",
+    "thumbnailUrl": "/Manager/apps_data/dash-ideogram/thumbnail_99140384-b863-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-ideogram",
+    "metadata": {
+      "title": "Ideogram",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-ideogram\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-ideogram\">R</a>.</p>",
+      "tags": "Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-manhattan-plot",
+    "thumbnailUrl": "/Manager/apps_data/dash-manhattan-plot/thumbnail_cbe67de6-b863-11e9-9a29-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-manhattan-plot",
+    "metadata": {
+      "title": "Manhattan Plot",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-manhattan-plot\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-manhattan-plot\">R</a>.</p>\n<p><br></p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-molecule-2d-viewer",
+    "thumbnailUrl": "/Manager/apps_data/dash-molecule-2d-viewer/thumbnail_ed0d013e-b863-11e9-ba94-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-molecule-2d-viewer",
+    "metadata": {
+      "title": "Molecule 2D Viewer ",
+      "description": "<p>Two-dimensional visualization of molecular structures. View the app code in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-molecule-2d-viewer\">Python</a>.</p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "shammamah@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-molecule-3d-viewer",
+    "thumbnailUrl": "/Manager/apps_data/dash-molecule-3d-viewer/thumbnail_5ea9d084-afdf-11e9-817c-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-molecule-3d-viewer",
+    "metadata": {
+      "title": "Molecule 3D Viewer",
+      "description": "<p>Molecule visualization in 3D - perfect for viewing biomolecules such as proteins, DNA and RNA. Includes stick, cartoon, and sphere representations.&nbsp;</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-molecule-3d-viewer\">Python</a>&nbsp;</p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "shammamah@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-needle-plot",
+    "thumbnailUrl": "/Manager/apps_data/dash-needle-plot/thumbnail_2ecb6386-b864-11e9-8982-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-needle-plot",
+    "metadata": {
+      "title": "Needle Plot",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-needle-plot\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-needleplot\">R</a>.</p>",
+      "tags": "Pharma,Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-onco-print",
+    "thumbnailUrl": "/Manager/apps_data/dash-onco-print/thumbnail_c159d804-b864-11e9-817c-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-onco-print",
+    "metadata": {
+      "title": "OncoPrint",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-onco-print\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-oncoprint\">R</a>.</p>",
+      "tags": "Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-sequence-viewer",
+    "thumbnailUrl": "/Manager/apps_data/dash-sequence-viewer/thumbnail_e566b17c-b864-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-sequence-viewer",
+    "metadata": {
+      "title": "Sequence Viewer",
+      "description": "<p>This app's source code available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-sequence-viewer\">Python</a> and <a href=\"https://github.com/plotly/dash-bio/blob/master/R/dashbioSequenceViewer.R\">R</a>.</p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-speck",
+    "thumbnailUrl": "/Manager/apps_data/dash-speck/thumbnail_7f3368f4-b865-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-speck",
+    "metadata": {
+      "title": "Speck",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-speck\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-speck\">R</a>.</p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-volcano-plot",
+    "thumbnailUrl": "/Manager/apps_data/dash-volcano-plot/thumbnail_98886b2e-b865-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-volcano-plot",
+    "metadata": {
+      "title": "Volcano Plot",
+      "description": "<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/tree/master/tests/dashbio_demos/dash-volcano-plot\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-volcanoplot\">R</a>.</p>",
+      "tags": "Pharma,Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 18.5,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-floris-gch",
+    "thumbnailUrl": "/Manager/apps_data/dash-floris-gch/thumbnail_6e138e2c-756b-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-floris-gch",
+    "metadata": {
+      "title": "Wind Turbine Wake Modelling with FLORIS",
+      "description": "<p>Get <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-floris-gch\">source code</a>.</p>",
+      "tags": "VTK,Energy,Aerospace",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 19,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-daq-tektronix350",
+    "thumbnailUrl": "/Manager/apps_data/dash-daq-tektronix350/thumbnail_f6ed5fe8-67b1-11ea-9fd8-0242ac110072.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-daq-tektronix350",
+    "metadata": {
+      "title": "Oscilloscope DAQ",
+      "description": "<p>This app creates an interactive interface with a tektronix function generator. <a href=\"https://dash.plot.ly/dash-daq\">Dash DAQ </a>facilitates controlling a real instrument with python code. Play with control items(knobs, radiobuttons) to set devices parameter, and update graph accordingly. This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-daq-tektronix350\">Python</a>.</p>",
+      "tags": "DAQ,Electronics,Automotive",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 20,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-ocean-optics",
+    "thumbnailUrl": "/Manager/apps_data/dash-ocean-optics/thumbnail_7ad3fb04-3621-11ea-9ae6-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-ocean-optics",
+    "metadata": {
+      "title": "Ocean Optics",
+      "description": "<p>&nbsp;A&nbsp;<a href=\"https://dash.plot.ly/dash-daq\">Dash DAQ</a>&nbsp;application to interface with an Ocean Optics spectrometer. With interactive UI components written in Python, you can read and control the instrument in real-time.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-ocean-optics\">Python</a>&nbsp;and&nbsp;<a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-ocean-optics\">R</a>.&nbsp;</p>",
+      "tags": "Semiconductor,DAQ,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 20,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-peaky-finders",
+    "thumbnailUrl": "/Manager/apps_data/dash-peaky-finders/thumbnail_681e70b8-93e3-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-peaky-finders",
+    "metadata": {
+      "title": "US Electric Grid Forecasting",
+      "description": "<p>This is an application with helpful peak load &nbsp;visualizations and a day ahead forecasting model for five different &nbsp;ISOs. It does not demonstrate cutting-edge peak load forecasting methods &nbsp;-- there are a handful of high tech companies and millions of dollars &nbsp;spent trying to solve this problem -- but rather illustrate core &nbsp;concepts and explore how well a model can do with just historical load &nbsp;and temperature data.&nbsp;</p>\n<p><a href=\"https://github.com/kbaranko/peaky-finders\">Source Code</a></p>",
+      "tags": "Energy",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 20,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-pk-calc",
+    "thumbnailUrl": "/Manager/apps_data/dash-pk-calc/thumbnail_cc7f6826-b232-11e9-8925-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-pk-calc",
+    "metadata": {
+      "title": "Pharmacokinetics calculator",
+      "description": "<p>Pharmacokinetics calculator Dash app demo. This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-pk-calc\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-pk-calc\">R</a>.</p>",
+      "tags": "Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Shammamah Hossain",
+        "email": "dashbio@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 20,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-turbine-maintenance",
+    "thumbnailUrl": "/Manager/apps_data/dash-turbine-maintenance/thumbnail_508e5a6c-9703-11eb-bffb-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-turbine-maintenance",
+    "metadata": {
+      "title": "Wind Turbine Predictive Maintenance",
+      "description": "<p><a href=\"https://github.com/iameminmammadov/dash-predictive-maintenance\">Source Code</a></p>\n<p><br></p>\n<p><code>dash-predictive-maintenance</code> is a dashboard designed to demonstrate the power of Machine Learning to predict failures (Remaining Useful Life (RUL)) in wind turbines. The data covers periods from May, 2014 to January, 2015. To predict the date when equipment will completely fail (RUL), XGBoost is used. The achieved RMSE error is <code>0.018534</code> days, which is highly accurate.&nbsp;</p>",
+      "tags": "Energy",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 21,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-yield-curve",
+    "thumbnailUrl": "/Manager/apps_data/dash-yield-curve/thumbnail_b2f9462a-afc0-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-yield-curve",
+    "metadata": {
+      "title": "Yield Curve",
+      "description": "<p>This Dash app adapts the NYT's &nbsp;report: <a href=\"https://www.nytimes.com/interactive/2015/03/19/upshot/3d-yield-curve-economic-growth.html\"><u>A 3-D View of a Chart That Predicts The Economic Future: The Yield Curve</u></a>.&nbsp;</p>\n<p>Find this source code from <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-yield-curve\">https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-yield-curve</a>.</p>",
+      "tags": "Financial,3d,Insurance",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 21,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-daq-iv-tracer",
+    "thumbnailUrl": "/Manager/apps_data/dash-daq-iv-tracer/thumbnail_b28d3a0c-b867-11e9-a5b0-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-daq-iv-tracer",
+    "metadata": {
+      "title": "IV Tracer",
+      "description": "<p>This app uses the graphic elements of Dash DAQ to create interface for acquiring current-voltage I-V curves with a Keithley 2400 SourceMeter.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-daq-iv-tracer\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-daq-iv-tracer\">R</a>.</p>",
+      "tags": "DAQ,Semiconductors,Manufacturing",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": 22,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-lastodash-de",
+    "thumbnailUrl": "/Manager/apps_data/dash-lastodash-de/thumbnail_68495fd2-a895-11eb-903f-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-lastodash-de",
+    "metadata": {
+      "title": "Drilling Data Visualization",
+      "description": "<p>This app takes a Log ASCII Standard(LAS) file, and build an interactive visualization dashboard. Using <a href=\"https://plotly.com/dash/design-kit/\">Design Kit</a> and <a href=\"https://plotly.com/dash/snapshot-engine/\">Snapshot Engine</a>, this app generates on-demand report through the Dash UI.</p>",
+      "tags": "Design Kit,Report,Snapshot Engine,Energy",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 22,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-lunar-lander",
+    "thumbnailUrl": "/Manager/apps_data/dash-lunar-lander/thumbnail_70601238-4180-11ea-b1b1-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-lunar-lander",
+    "metadata": {
+      "title": "Lunar Lander Trade Study",
+      "description": "<p>This app allows for exploring the trade space of a lunar lander. You can adjust different parameters on the lander, like max angular velocity and inital mass, using the sliders and a new optimal trajectory will be recomputed in near real time using Casadi. This app source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-lunar-lander\">Python</a>.</p>",
+      "tags": "Aerospace,Automotive,Control Theory,CasADi",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 22,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "ddk-oil-and-gas-demo",
+    "thumbnailUrl": "/Manager/apps_data/ddk-oil-and-gas-demo/thumbnail_dd6e1c4c-3038-11eb-989d-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/ddk-oil-and-gas-demo",
+    "metadata": {
+      "title": "Oil & Gas Wells (DDK)",
+      "description": "<p>Styled with <a href=\"https://dash-design-kit.plot.ly/\">Dash Design Kit</a>!</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit,Geospatial,Energy",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": 22,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-cytoscape-phylogeny",
+    "thumbnailUrl": "/Manager/apps_data/dash-cytoscape-phylogeny/thumbnail_246f878e-b871-11e9-a7ab-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-cytoscape-phylogeny",
+    "metadata": {
+      "title": "Cytoscape Phylogeny",
+      "description": "<p>&nbsp;</p>\n<p>This is a demo of the Dash interactive Python framework developed by <a href=\"https://plot.ly/\">Plotly</a>.&nbsp;</p>\n<p>You can view the code on: <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-cytoscape-phylogeny\">https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-cytoscape-phylogeny</a></p>",
+      "tags": "Pharma,Healthcare,Cytoscape,COVID",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 23,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "ternary-map-explorer",
+    "thumbnailUrl": "/Manager/apps_data/ternary-map-explorer/thumbnail_d368c002-a898-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/ternary-map-explorer",
+    "metadata": {
+      "title": "Ternary Map Explorer",
+      "description": "<p>This app creates a dashboard for mineral composition evaluations from natural gas wells.<br>\nBy pairing geographic map of well locations with ternary diagram, this app helps geologists to find out results of gas wells with relationship to formations or rock types.&nbsp;</p>\n<p>To find out more about <a href=\"https://plotly.com/dash/design-kit/\">Design Kit</a> and <a href=\"https://plotly.com/dash/snapshot-engine/\">Snapshot Engine</a>, get <a href=\"https://plotly.com/get-demo/\">a demo </a>today!</p>",
+      "tags": "Energy,Geospatial,Design Kit,Report",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 23,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-mes-form-submission",
+    "thumbnailUrl": "/Manager/apps_data/dash-mes-form-submission/thumbnail_9100ca40-bd7e-11e9-ba94-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-mes-form-submission",
+    "metadata": {
+      "title": "Data Entry Form",
+      "description": "<p>This Dash app shows how to create a form for data entry. It connects to a live SQlite3 database and adds a row to a SQlite3 table each time the form is submitted.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/dash-mes-form-submission/apps/dash-mes-form-submission\">Python</a>.&nbsp;</p>",
+      "tags": "SQL,Manufacturing,Shipping & Delivery,Retail",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Jack",
+        "email": "jack@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": 24,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-stitching",
+    "thumbnailUrl": "/Manager/apps_data/dash-stitching/thumbnail_10bfbf34-b23a-11e9-8925-0242ac11004a.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-stitching",
+    "metadata": {
+      "title": "Stitching and Image Registration",
+      "description": "<p>This is a demo of the Dash interactive Python framework developed by <a href=\"https://plot.ly/\">Plotly</a>.&nbsp;</p>\n<p>Find this app source code from&nbsp;</p>\n<p>https://github.com/plotly/dash-sample-apps/tree/dash-stitching/apps/dash-stitching</p>",
+      "tags": "Computer Vision,Image Processing,Biotechnology,Semiconductor",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 25,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "bball-video-analysis",
+    "thumbnailUrl": "/Manager/apps_data/bball-video-analysis/thumbnail_83310b70-a38f-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/bball-video-analysis",
+    "metadata": {
+      "title": "Basketball Player Video Computer Vision Analysis",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a><strong>.</strong></p>\n<p><a href=\"https://plotly.com/get-demo/\"><u>Reach out to us</u></a> for the source code.</p>",
+      "tags": "Sport,Design Kit,AI,ML,Computer Vision",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 50,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-baseball-statistics",
+    "thumbnailUrl": "/Manager/apps_data/dash-baseball-statistics/thumbnail_c918b202-a38d-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-baseball-statistics",
+    "metadata": {
+      "title": "Baseball Historical Statistics",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a></p>\n<p><a href=\"https://github.com/devparra/baseball-hist-dash\">Source Code</a></p>\n<p><em>Using historical MLB (Major League Baseball) data, this application provides visualizations for team and player statistics dating from 1903 to 2020. Selecting from a dropdown menu, the era will update the list of available teams and players in the range set on the years slider. The slider allows the user to adjust the range of years with which the data is presented.</em></p>",
+      "tags": "Sport",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 50,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "soccer-match-analytics",
+    "thumbnailUrl": "/Manager/apps_data/soccer-match-analytics/thumbnail_60110556-a38e-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/soccer-match-analytics",
+    "metadata": {
+      "title": "Soccer Match Data Analysis",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a></p>\n<p>The app is actually comprised of two parts: a visual app and a game animation preparation script. This pre-preparation of animated game activity is necessary in order to speed up the graphical rendering process and minimize the amount of data processing downloading required to view a match. It is recommended to process no more than 25 minutes of a match at at time. Beyond this threshold it may be too difficult to create and render graphs.</p>\n<p><em>We would like to thank Bruno Dagnino and his team at </em><a href=\"https://metrica-sports.com/about-us/\"><em>Metrica Sports</em></a><em> for the sample tracking and event data used in this application. Files original are located here: </em><a href=\"https://github.com/metrica-sports/sample-data\"><em>https://github.com/metrica-sports/sample-data</em></a><em>. These files are part of Metrica's Elite Data product. So if you are subscribers to the Elite Data package you will be able to use these files seamlessly with this app.&nbsp;</em></p>",
+      "tags": "Sport,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 50,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "bball-player-explorer",
+    "thumbnailUrl": "/Manager/apps_data/bball-player-explorer/thumbnail_27c15b5a-a38f-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/bball-player-explorer",
+    "metadata": {
+      "title": "NBA Scouting & Player Performance Explorer",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a><strong>.</strong></p>\n<p><br></p>\n<p><a href=\"https://plotly.com/get-demo/\"><u>Reach out to us</u></a> for the source code.</p>",
+      "tags": "Sport,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 51,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-airfoil-design",
+    "thumbnailUrl": "/Manager/apps_data/dash-airfoil-design/thumbnail_6ab0cc10-a390-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-airfoil-design",
+    "metadata": {
+      "title": "Airfoil Design",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a></p>\n<p><br></p>\n<p><a href=\"https://github.com/peterdsharpe/Automotive-Airfoil-Design\">Source Code</a></p>",
+      "tags": "Automotive,CFD,Aerospace,Sport",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 51,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "formula1stats",
+    "thumbnailUrl": "/Manager/apps_data/formula1stats/thumbnail_f99358e2-a38d-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/formula1stats",
+    "metadata": {
+      "title": "Formula 1 Stats Explorer",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a></p>\n<p><br></p>\n<p><a href=\"https://plotly.com/get-demo/\" rel=\"noopener nofollow\"><u>Reach out to us</u></a> for the source code.</p>",
+      "tags": "Automotive,Sport,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 51,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "bball-shot-explorer",
+    "thumbnailUrl": "/Manager/apps_data/bball-shot-explorer/thumbnail_f65ba8ea-a38e-11eb-bffb-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/bball-shot-explorer",
+    "metadata": {
+      "title": "Basketball Shot Chart Explorer",
+      "description": "<p>Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a><strong>.</strong></p>\n<p><br></p>\n<p><a href=\"https://plotly.com/get-demo/\"><u>Reach out to us</u></a> for the source code.</p>",
+      "tags": "Sport,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 53,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-soccer-analytics",
+    "thumbnailUrl": "/Manager/apps_data/dash-soccer-analytics/thumbnail_adcb2038-a38e-11eb-9108-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-soccer-analytics",
+    "metadata": {
+      "title": "Soccer Match Data Analysis (OSS)",
+      "description": "<p>&nbsp;Learn more about this app in our post: <a href=\"https://plotlygraphs.medium.com/7-dash-apps-bringing-ai-ml-to-sports-analytics-cb6e7c993064\"><strong>7 Dash Apps Bringing AI &amp; ML to Sports Analytics</strong></a>&nbsp;</p>",
+      "tags": "Sport",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": 99,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "annotation-bounding-box",
+    "thumbnailUrl": "/Manager/apps_data/annotation-bounding-box/thumbnail_af08c29e-3038-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/annotation-bounding-box",
+    "metadata": {
+      "title": "Bounding Box Annotation",
+      "description": "<p>This app allows you to create bounding box annotation on an image, and send the geometry as pdf report. Annotations of objects can be used as training set for machine learning.</p>\n<p>This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Snapshot Engine,Design Kit,Job Queue,ML,Computer Vision,Automotive",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "custom-theme",
+    "thumbnailUrl": "/Manager/apps_data/custom-theme/thumbnail_b4ebf8e8-3038-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/custom-theme",
+    "metadata": {
+      "title": "Branded Starter App",
+      "description": "<p>The Starbuck's branded starter app. To get started with Dash at Starbucks, clone this application locally. This app uses the <a href=\"https://creative.starbucks.com/color/\">Starbucks Brand Guidelines</a>.</p>\n<p><br></p>\n<p><strong>Download this app onto your workstation</strong> with:</p>\n<p>git clone https://dash-demo.plotly.host/GIT/custom-theme</p>\n<p><br></p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-3d-image-partitioning",
+    "thumbnailUrl": "/Manager/apps_data/dash-3d-image-partitioning/thumbnail_bb37bf8e-a7a2-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-3d-image-partitioning",
+    "metadata": {
+      "title": "3D annotation with superpixels",
+      "description": "<p>This Dash app allows you to annotate automatically segmented brain regions. View the <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-3d-image-partitioning\">Python code</a>.</p>",
+      "tags": "Computer Vision,Image Processing,AI",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-aix360-heart",
+    "thumbnailUrl": "/Manager/apps_data/dash-aix360-heart/thumbnail_6821e188-d121-11ea-8584-0242ac110062.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-aix360-heart",
+    "metadata": {
+      "title": "Heart Disease Prediction",
+      "description": "<p>With Dash, you can easily integrate and interact with explainable AI (xAI) libraries like AI Explainability 360 (by IBM CODAIT). <a href=\"http://community.plotly.com/t/43090\">Click here</a> to learn more.</p>",
+      "tags": "AI,ML,IBM,xAI,Healthcare",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-avs-explorer",
+    "thumbnailUrl": "/Manager/apps_data/dash-avs-explorer/thumbnail_9e83c4b4-0fdb-11eb-a098-0242ac110012.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-avs-explorer",
+    "metadata": {
+      "title": "Autonomous Vehicle Visualization",
+      "description": "<p>This app loads scenes collected from self-driving car trips, and displays both sensor (e.g. lidar, path) and human annotated data (bounding boxes). You can choose between a basic and an advanced one UI. Get the <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-avs-explorer\">source code</a> and read the <a href=\"https://medium.com/plotly/the-history-of-autonomous-vehicle-datasets-and-3-open-source-python-apps-for-visualizing-them-afee9d13f58a\">blog post</a>.</p>",
+      "tags": "Geospatial,3d,Automotive",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-canvas-ocr",
+    "thumbnailUrl": "/Manager/apps_data/dash-canvas-ocr/thumbnail_c7028a54-4deb-11ea-9538-0242ac110073.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-canvas-ocr",
+    "metadata": {
+      "title": "AI Handwriting Recognition",
+      "description": "<p>This app uses Optical Character Recognition (OCR) to convert handwriting into text.</p>\n<p><a href=\"https://github.com/plotly/dash-sample-apps/tree/oss-canvas-text/apps/dash-canvas-ocr\">Source code</a></p>",
+      "tags": "OCR,AI,ML",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-chess-analytics",
+    "thumbnailUrl": "/Manager/apps_data/dash-chess-analytics/thumbnail_e8ba0724-b1ab-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-chess-analytics",
+    "metadata": {
+      "title": "Chess Analytics",
+      "description": "<p>Chess end-game piece analytics (<a href=\"https://www.linkedin.com/school/nova-ims-information-management-school/\"><u>NOVA-IMS</u></a> class project)</p>\n<p><br></p>\n<p>Credit: <a href=\"https://www.linkedin.com/in/rupesh-baradi-83ab16142/\"><u>Rupesh Baradi</u></a> <a href=\"https://www.linkedin.com/in/diasctiago/\"><u>Tiago Dias</u></a> <a href=\"https://www.linkedin.com/in/fredericobsantos/\"><u>Frederico Santos</u></a></p>\n<p><br></p>\n<p>Code: <a href=\"https://github.com/Rupeshbaradi/Interactive-Visulizations-with-Plotly-Dash\"><u>Github</u></a></p>",
+      "tags": "NOVA-IMS",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Dave Gibbon",
+        "email": "dave@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-covid-xray",
+    "thumbnailUrl": "/Manager/apps_data/dash-covid-xray/thumbnail_01f6f82e-226d-11eb-9aa7-0242ac110012.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-covid-xray",
+    "metadata": {
+      "title": "COVID Chest X-Rays",
+      "description": "<p>Annotate medical image datasets of COVID-19 patients in order to extract a lung occlusion (and train machine learning models).</p>",
+      "tags": "Image Processing,Healthcare,COVID",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Emmanuelle Gouillart",
+        "email": "emma@plotly.com",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-cytoscape-lda",
+    "thumbnailUrl": "/Manager/apps_data/dash-cytoscape-lda/thumbnail_95f85acc-9604-11ea-af15-0242ac110072.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-cytoscape-lda",
+    "metadata": {
+      "title": "CORD-19 LDA Analysis",
+      "description": "<p>This app demonstrates the use of <a href=\"https://dash.plotly.com/cytoscape\">Dash Cytoscape</a> and <a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html\">t-SNE</a> to display the output of <a href=\"https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation\">Latent Dirichlet Allocation (LDA) </a>analysis on the <a href=\"https://www.semanticscholar.org/cord19\">CORD-19 dataset</a> of literature related to COVID-19.&nbsp;</p>\n<p>Get the source code for this app in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-cytoscape-lda\">Python</a>!</p>",
+      "tags": "NLP,AI,ML,Cytoscape,t-SNE,LDA,COVID,Healthcare,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-deck-explorer",
+    "thumbnailUrl": "/Manager/apps_data/dash-deck-explorer/thumbnail_341d8878-a9cb-11eb-989d-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-deck-explorer",
+    "metadata": {
+      "title": "Dash Deck Explorer",
+      "description": "<p><a href=\"https://github.com/plotly/dash-deck\">Dash Deck</a> is a library for building 3D interactive maps and graphical visualizations directly in Dash. Built on top of deck.gl, it supports maps built using pydeck and deck.gl’s JSON API.</p>\n<p><br></p>",
+      "tags": "3D,Geospatial,pydeck",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-deit",
+    "thumbnailUrl": "/Manager/apps_data/dash-deit/thumbnail_d6531982-a7c8-11eb-bffb-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-deit",
+    "metadata": {
+      "title": "Image Classification with DeiT",
+      "description": "<p><em>A User Interface for DeiT built with Dash in ~130 lines of pure Python.&nbsp;</em></p>\n<p>Data-efficient image Transformers (DeiT) is a new family of computer vision models that achieve near state-of-the-art performance on ImageNet with significantly less training data and computation resources. The smaller variant can process up to 500 images per second with very high accuracy, and the largest variant matches the performance of EfficientNet-B7 on ImageNet while being 2x faster to train. Download the source code <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-deit\">here</a>.</p>",
+      "tags": "AI,ML,Computer Vision,PyTorch",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-detr",
+    "thumbnailUrl": "/Manager/apps_data/dash-detr/thumbnail_c50a2814-c21d-11ea-8296-0242ac110062.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-detr",
+    "metadata": {
+      "title": "DETR Object Detection",
+      "description": "<p>The release of <a href=\"https://github.com/facebookresearch/detr\"><em>DETR: End-to-End Object Detection with Transformers</em></a> showed significant improvement in real-time object detection and panoptic segmentation (PS), while greatly simplifying the architecture. As a mean to test the model, we decided to build a simple <a href=\"https://plotly.com/dash/\" rel=\"nofollow\">Dash</a> app that let you experiment and play with the model through a user interface.</p>\n<p><a href=\"https://github.com/plotly/dash-detr\">Download the app here.</a></p>\n<p><a href=\"https://plotly.com/dash/\">Build and deploy apps like this.</a></p>",
+      "tags": "AI,ML,PyTorch,Computer Vision,Manufacturing,Automotive",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-dub",
+    "thumbnailUrl": "/Manager/apps_data/dash-dub/thumbnail_679ade62-5120-11ea-9538-0242ac110073.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-dub",
+    "metadata": {
+      "title": "AI Speech Recognition",
+      "description": "<p>This app contains an example of speech-to-text recognition driven by a Dash using the PyDub and SpeechRecognition packages.</p>\n<p><a href=\"https://github.com/plotly/dashdub\">Source code</a></p>",
+      "tags": "AI,Speech Recognition",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-fifa-dashboard",
+    "thumbnailUrl": "/Manager/apps_data/dash-fifa-dashboard/thumbnail_c34835b8-b1a8-11eb-bffb-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-fifa-dashboard",
+    "metadata": {
+      "title": "Fifa Dashboard",
+      "description": "<p>Old and New Generation Football Player Comparison ⚽ (<a href=\"https://www.linkedin.com/school/nova-ims-information-management-school/\"><u>NOVA-IMS</u></a> class project)</p>\n<p><br></p>\n<p>Credit: <a href=\"https://www.linkedin.com/in/catarina-pinheiro-599806142/\"><u>Catarina Alexandra</u></a> <a href=\"https://www.linkedin.com/in/henrique-renda-269839175/\"><u>Henrique Renda</u></a> <a href=\"https://www.linkedin.com/in/lorenzo-pigozzi/\"><u>Lorenzo Pigozzi</u></a> <a href=\"https://www.linkedin.com/in/phucnh22/\"><u>Phuc Nguyen</u></a></p>\n<p><br></p>\n<p>Code: <a href=\"https://github.com/phucnh22/FIFADashboardVisualization\"><u>Github</u></a></p>",
+      "tags": "NOVA-IMS",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Dave Gibbon",
+        "email": "dave@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-food-consumption",
+    "thumbnailUrl": "/Manager/apps_data/dash-food-consumption/thumbnail_350cd2aa-b1a7-11eb-989d-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-food-consumption",
+    "metadata": {
+      "title": "Food Consumption",
+      "description": "<p>Food consumption characteristics of the EU (<a href=\"https://www.linkedin.com/school/nova-ims-information-management-school/\"><u>NOVA-IMS</u></a> class project)</p>\n<p><br></p>\n<p>Credit: &nbsp;<a href=\"https://www.linkedin.com/in/franz-frank-a9b054138/\"><u>Franz Frank</u></a> <a href=\"https://www.linkedin.com/in/steffen-hillmann-787b5a14a/\"><u>Steffen Hillmann </u></a>&nbsp;<a href=\"https://www.linkedin.com/in/maximilian-maukner-b2542a193/\"><u>Maximilian Maukner</u></a> <a href=\"https://www.linkedin.com/in/ehsan-meisami/\"><u>Ehsan Meisami</u></a></p>\n<p><br></p>\n<p>Code: <a href=\"https://github.com/FranzMichaelFrank/health_eu\"><u>Github</u></a></p>",
+      "tags": "NOVA-IMS",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Dave Gibbon",
+        "email": "dave@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-food-footprint",
+    "thumbnailUrl": "/Manager/apps_data/dash-food-footprint/thumbnail_d6d6bb3c-b1a7-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-food-footprint",
+    "metadata": {
+      "title": "Food Footprint",
+      "description": "<p>Carbon and Water foodprint of your foods (<a href=\"https://www.linkedin.com/school/nova-ims-information-management-school/\"><u>NOVA-IMS</u></a> class project)</p>\n<p><br></p>\n<p>Credit: <a href=\"https://www.linkedin.com/in/inesrroque/\"><u>Inês Roque</u></a> <a href=\"https://www.linkedin.com/in/ricardodesanunes/\"><u>Ricardo Nunes</u></a> <a href=\"https://www.linkedin.com/in/ana-lu%C3%ADs-carrelha-580922198/\"><u>Ana Luís Carrelha</u></a> <a href=\"https://www.linkedin.com/in/in%C3%AAs-m-a6324311a/\"><u>Inês Melo</u></a></p>\n<p><br></p>\n<p>Code: <a href=\"https://github.com/InesRoque3/GroupV_project2\"><u>Github</u></a></p>",
+      "tags": "NOVA-IMS",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Dave Gibbon",
+        "email": "dave@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-gan-editor",
+    "thumbnailUrl": "/Manager/apps_data/dash-gan-editor/thumbnail_3be0dd7a-b18e-11ea-8296-0242ac110062.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-gan-editor",
+    "metadata": {
+      "title": "GAN Face Generator",
+      "description": "<p><strong>Dash Enterprise enables you to run Deep Learning models in real time with Kubernetes Scaling.</strong> This app shows how to deploy a face GAN model from <strong>Pytorch Hub</strong>, and control the output in real time with a user interface fully built in Python with Dash Design Kit. For more details, check out our Medium article.</p>\n<p>Interested in deploying Deep Learning please <a href=\"https://plotly.com/get-demo/\">reach out to get a demo</a>.</p>",
+      "tags": "Computer Vision,Deep Learning,PyTorch,ML,AI",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-global-living-standards",
+    "thumbnailUrl": "/Manager/apps_data/dash-global-living-standards/thumbnail_8991c7d0-b1a8-11eb-a3b0-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-global-living-standards",
+    "metadata": {
+      "title": "Global Living Standards",
+      "description": "<p>Compare cities of the world based on personal living standard preferences (<a href=\"https://www.linkedin.com/school/nova-ims-information-management-school/\"><u>NOVA-IMS</u></a> class project)</p>\n<p><br></p>\n<p>Credit: : <a href=\"https://www.linkedin.com/in/mario-rodriguez-ibanez/\"><u>Mario Rodríguez Ibáñez </u></a><a href=\"https://www.linkedin.com/in/danielphilippi/\"><u>Daniel Philippi</u></a> <a href=\"https://www.linkedin.com/in/diogoacabado/\"><u>Diogo Acabado</u></a> <a href=\"https://www.linkedin.com/in/doris-macean-35208243/\"><u>Doris Macean</u></a></p>\n<p><br></p>\n<p>Code: <a href=\"https://github.com/Farkites/where_to_live\"><u>Github</u></a></p>",
+      "tags": "NOVA-IMS",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Dave Gibbon",
+        "email": "dave@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-igv",
+    "thumbnailUrl": "/Manager/apps_data/dash-igv/thumbnail_2e1d101a-7348-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-igv",
+    "metadata": {
+      "title": "IGV",
+      "description": "<p>A high-performance genomics data visualization component which offers support for array-based and next-generation sequencing data, and an interactive UI for real-time exploration of large scale genomic data.This app's source code is available in <a href=\"https://github.com/plotly/dash-bio/blob/master/tests/dashbio_demos/dash-igv/app.py\">Python</a> .</p>",
+      "tags": "Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Hammad Khan",
+        "email": "hammadkhan@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-image-annotation",
+    "thumbnailUrl": "/Manager/apps_data/dash-image-annotation/thumbnail_bce29c0e-dbed-11ea-833c-0242ac110062.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-image-annotation",
+    "metadata": {
+      "title": "Bounding Box Classification",
+      "description": "<p>Create annotated images to train object classification systems.</p>",
+      "tags": "ML,Computer Vision,Image Processing,AI",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Nicholas Esterer",
+        "email": "nicholas.esterer@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-label-properties",
+    "thumbnailUrl": "/Manager/apps_data/dash-label-properties/thumbnail_b9ea0948-2449-11eb-9aa7-0242ac110012.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-label-properties",
+    "metadata": {
+      "title": "Exploration of image segmentation",
+      "description": "<p>This app demonstrates how rich meta-data can be extracted from an image segmentation and linked with an interactive data table to explore the data.</p>",
+      "tags": "Semiconductor,Healthcare,AI,Computer Vision,Image Processing",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-loan-grade",
+    "thumbnailUrl": "/Manager/apps_data/dash-loan-grade/thumbnail_d14b6e32-dcab-11ea-8409-0242ac110062.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-loan-grade",
+    "metadata": {
+      "title": "Loan Grade Classification AI",
+      "description": "",
+      "tags": "xAI,AI,ML,scikit-learn,Snowflake,SQL,Financial,Insurance",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-lyft-explorer",
+    "thumbnailUrl": "/Manager/apps_data/dash-lyft-explorer/thumbnail_eb7f3322-0fca-11eb-8836-0242ac110012.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-lyft-explorer",
+    "metadata": {
+      "title": "Lyft Autonomous Vehicles",
+      "description": "<p>This shows how to build a real-time AV explorer from scratch using Dash Deck and the Lyft perception dataset. The code is easily customizable and also compatible with 3D detection models written in Python. Get the <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-lyft-explorer\">source code</a> and read the <a href=\"https://medium.com/plotly/the-history-of-autonomous-vehicle-datasets-and-3-open-source-python-apps-for-visualizing-them-afee9d13f58a\">blog post</a>.</p>",
+      "tags": "3d,Automotive,Computer Vision,pydeck,Geospatial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-mnist-explorer",
+    "thumbnailUrl": "/Manager/apps_data/dash-mnist-explorer/thumbnail_38109242-4764-11ea-8124-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-mnist-explorer",
+    "metadata": {
+      "title": "Mnist Explorer",
+      "description": "<p>This app applies T-SNE on the images from the <a href=\"https://github.com/zalandoresearch/fashion-mnist\"><u>fashion mnist dataset</u></a>, which reduces each image to a two dimensional embedding to visualize the similarity between images. Clusters represent similar images, and the greater the distance between two points, the less similar the images are. The app also allows to predict the class of each image using a simple convolutional neural network (CNN). The T-SNE embeddings were generated using <a href=\"https://github.com/rapidsai/cuml\"><u>RAPIDS cuML</u></a>, and the CNN was trained using Keras.</p>\n<p>App is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/dash-mnist-explorer/apps/dash-fashion-mnist-explorer\">Python</a>.</p>",
+      "tags": "AI,ML,Computer Vision,t-SNE,Retail,RAPIDS",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-ngl-molecule-viewer",
+    "thumbnailUrl": "/Manager/apps_data/dash-ngl-molecule-viewer/thumbnail_4d8656fe-7349-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-ngl-molecule-viewer",
+    "metadata": {
+      "title": "NGL Molecule Viewer",
+      "description": "<p>View 3D visualizations of biomolecules and interactions between molecular structures in a variety of representations.</p>",
+      "tags": "Biotechnology,Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "Hammad Khan",
+        "email": "hammadkhan@plot.ly",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-pileup-demo",
+    "thumbnailUrl": "/Manager/apps_data/dash-pileup-demo/thumbnail_af6bb098-a13f-11eb-989d-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-pileup-demo",
+    "metadata": {
+      "title": "Dash Bio Pileup Demo",
+      "description": "<p>Pileup.js is a component that you can find in the Dash Bio library. <a href=\"https://github.com/plotly/dash-bio\">Get Dash Bio</a></p>",
+      "tags": "Pharma,Biotechnology",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-port-analytics",
+    "thumbnailUrl": "/Manager/apps_data/dash-port-analytics/thumbnail_4487d758-a143-11eb-903f-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-port-analytics",
+    "metadata": {
+      "title": "Dash Ports Analytics with Appsilon",
+      "description": "<p>This app shows how to use Dash and Appsilon to analyze ports data. <a href=\"https://github.com/Appsilon/dash-port-dashboard\">Source Code</a></p>",
+      "tags": "Maritime,Geospatial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-shap-tips",
+    "thumbnailUrl": "/Manager/apps_data/dash-shap-tips/thumbnail_b060c586-d2a7-11ea-95fe-0242ac110062.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-shap-tips",
+    "metadata": {
+      "title": "xAI with SHAP",
+      "description": "<p>ML models are becoming ubiquitous in supporting human decisions, but their outputs are sometimes difficult to explain. &nbsp;</p>\n<p>With Dash Enterprise and SHAP, you can bridge this gap and quickly productionize explainable AI apps. <a href=\"https://plotly.com/contact-us\">Contact us</a> to learn more, or <a href=\"https://plotly.com/get-demo/\">get a demo</a> of this app!<br>\n</p>",
+      "tags": "AI,ML,xAI,Gradient Boosting,Insurance,Financial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-skrf-viewer",
+    "thumbnailUrl": "/Manager/apps_data/dash-skrf-viewer/thumbnail_66cbb4c0-93ff-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-skrf-viewer",
+    "metadata": {
+      "title": "Network Parameter Viewer",
+      "description": "<p>Network parameter viewer, supporting several formats and projections. The app uses Scikit-RF</p>\n<p><br></p>\n<p><a href=\"https://github.com/scikit-rf/dash-apps\">Source Code</a></p>",
+      "tags": "Telecom",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-slides",
+    "thumbnailUrl": "/Manager/apps_data/dash-slides/thumbnail_c1d0c8b8-3038-11eb-903f-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-slides",
+    "metadata": {
+      "title": "Series Fund Slides",
+      "description": "<p>Design a slide deck using Dash Design Kit</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit,Financial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-snowflake",
+    "thumbnailUrl": "/Manager/apps_data/dash-snowflake/thumbnail_5b9059e2-a663-11ea-b296-0242ac110072.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-snowflake",
+    "metadata": {
+      "title": "Product Review NLP",
+      "description": "<p>Search through hundreds of thousands of product reviews stored in Snowflake and use artificial intelligence to perform sentiment analysis and topic extraction on the resulting text.&nbsp;</p>\n<p>To learn more about this app and how Dash Enterprise can help with your AI initiatives, please <a href=\"https://plotly.com/get-demo/\">reach out to get a demo</a>.</p>",
+      "tags": "NLP,Snowflake,SQL,ML,AI,Retail",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-spatial-clustering",
+    "thumbnailUrl": "/Manager/apps_data/dash-spatial-clustering/thumbnail_ae786ef6-4763-11ea-b1b1-0242ac110065.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-spatial-clustering",
+    "metadata": {
+      "title": "Real Estate Spatial Clustering",
+      "description": "<p>This app applies spatial clustering and regionalization analysis to discover the dataset of AirBnb listings in the city of Austin. Models are created using <a href=\"https://pysal.readthedocs.io/en/latest/\" rel=\"nofollow\">pysal</a> and scikit-learn.</p>\n<p>View the source code here in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-spatial-clustering\">Python</a>.&nbsp;</p>",
+      "tags": "AI,Geospatial,scikit-learn,Real Estate,Insurance",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-study-browser",
+    "thumbnailUrl": "/Manager/apps_data/dash-study-browser/thumbnail_ded02e8a-9918-11e9-9331-0242ac11005b.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-study-browser",
+    "metadata": {
+      "title": "Animal Study Browser",
+      "description": "<p>This is a demo of the Dash interactive Python framework developed by <a href=\"https://plot.ly/\" rel=\"nofollow\">Plotly</a>.&nbsp;</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-study-browser\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-study-browser\">R</a>.</p>",
+      "tags": "Pharma",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-time-gating",
+    "thumbnailUrl": "/Manager/apps_data/dash-time-gating/thumbnail_948015dc-93f0-11eb-b046-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-time-gating",
+    "metadata": {
+      "title": "Time Gating Analysis with Scikit-RF",
+      "description": "<p>Apply Time-gating to any network.</p>\n<p><br></p>\n<p><a href=\"https://github.com/scikit-rf/dash-apps\">Source Code</a></p>",
+      "tags": "Telecom",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-time-series",
+    "thumbnailUrl": "/Manager/apps_data/dash-time-series/thumbnail_ca6e20c4-3038-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-time-series",
+    "metadata": {
+      "title": "Sales Forecasting",
+      "description": "<p>This app uses Facebook's Prophet time series forecasting model to perform predictive analysis of regional sales. The data was collected for locations across various states and for various market segments, and the model was used to forecast future sales, which is useful for making informed decision and infer the supply needed for future months.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "AI,Time Series,Design Kit,Financial,Retail",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-vehicle-geometry",
+    "thumbnailUrl": "/Manager/apps_data/dash-vehicle-geometry/thumbnail_9478e8b0-9185-11eb-b046-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-vehicle-geometry",
+    "metadata": {
+      "title": "Vehicle Geometry with OpenFOAM",
+      "description": "",
+      "tags": "VTK,Automobile,CFD,Aerospace",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-video-detection",
+    "thumbnailUrl": "/Manager/apps_data/dash-video-detection/thumbnail_41fc5a82-0fca-11eb-8761-0242ac110012.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-video-detection",
+    "metadata": {
+      "title": "Video Annotating",
+      "description": "<p>Given a pre-annotated video, this lets you run 2D object detection on a selected frame. You can also edit the annotations, add new bounding boxes, and export the new data table. Get the <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-video-detection\">source code</a> and read the <a href=\"https://medium.com/plotly/the-history-of-autonomous-vehicle-datasets-and-3-open-source-python-apps-for-visualizing-them-afee9d13f58a\">blog post</a>.</p>",
+      "tags": "TensorFlow,Automotive,AI,ML,Video,Computer Vision",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-vtk-explorer",
+    "thumbnailUrl": "/Manager/apps_data/dash-vtk-explorer/thumbnail_c959d9b8-9b9e-11eb-903f-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-vtk-explorer",
+    "metadata": {
+      "title": "Dash VTK Explorer",
+      "description": "<p>This app lets you explorer various demos from <a href=\"https://github.com/plotly/dash-vtk\">dash-vtk</a></p>",
+      "tags": "VTK,Aerospace,Automotive",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-vtk-tutorials",
+    "thumbnailUrl": "/Manager/apps_data/dash-vtk-tutorials/thumbnail_27359178-98c8-11eb-a3b0-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-vtk-tutorials",
+    "metadata": {
+      "title": "Dash VTK Tutorials",
+      "description": "<p>This contains the tutorials from the <a href=\"https://github.com/plotly/dash-vtk\">Dash VTK User Guide</a></p>",
+      "tags": "VTK",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dash-word-arithmetic",
+    "thumbnailUrl": "/Manager/apps_data/dash-word-arithmetic/thumbnail_d8e6c6d2-9075-11ea-83eb-0242ac110072.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dash-word-arithmetic",
+    "metadata": {
+      "title": "Word Embeddings Arithmetic",
+      "description": "<p><strong>Building advanced and scalable NLP analysis apps with Dash Enterprise.</strong> This app introduces novel ways to visualize word2vec. Through interactive networks, you can visualize nearest neighbors of over 35k words, and arithmetic expressions like \"king - man + woman\". The app was styled using <a href=\"https://plotly.com/dash/design-kit/\">Dash Design Kit</a>, and can be scaled to arbitrary numbers of users through <a href=\"https://plotly.com/dash/kubernetes/\">Kubernetes</a>.</p>\n<p><br></p>\n<p><a href=\"https://plotly.com/get-demo/\">Reach out </a>to learn more about how to build such apps, or learn more by reading the Medium article.</p>",
+      "tags": "NLP,Cytoscape,AI,ML,Speech Recognition",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "dashr-svm",
+    "thumbnailUrl": "/Manager/apps_data/dashr-svm/thumbnail_bd35faa6-34a9-11eb-b046-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/dashr-svm",
+    "metadata": {
+      "title": "Dash for R: Support Vector Machine",
+      "description": "<p>This app built with DashR lets you explore support vector clustering (a type of support vector machine) with UI input parameters. Toy datasets and useful ML metrics plots are included. It is fully written in Dash + scikit-learn.</p>\n<p>This app's source code is available in <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dash-svm\">Python</a> and <a href=\"https://github.com/plotly/dash-sample-apps/tree/master/apps/dashr-svm\">R</a>.</p>",
+      "tags": "ML,AI,SVM,scikit-learn",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "databricks-connect",
+    "thumbnailUrl": "/Manager/apps_data/databricks-connect/thumbnail_d22963fa-3038-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/databricks-connect",
+    "metadata": {
+      "title": "Databricks Connect",
+      "description": "<p>Based on Yelp's open datasets, integration of Databricks with Dash using databricks-connect.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Databricks,Geospatial,Retail,Real Estate",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "ddk-operation-simulator",
+    "thumbnailUrl": "/Manager/apps_data/ddk-operation-simulator/thumbnail_e4ef704c-3038-11eb-bffb-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/ddk-operation-simulator",
+    "metadata": {
+      "title": "Operations Simulator",
+      "description": "<p>&nbsp;This App allows you to run simulations to see impacts on (inbound) call wait times, typical call arrival patterns and call wait times for a call center. It uses: The number of agents, number of calls , and average call intervals. Please refer to <a href=\"https://medium.com/@aveedibya/bringing-intelligence-in-operations-ec4176480770\">this article</a> for additional information.&nbsp;&nbsp;</p>\n<p>This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit,Snapshot Engine,Job Queue,ML,Manufacturing",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "financial-report",
+    "thumbnailUrl": "/Manager/apps_data/financial-report/thumbnail_eb8bf416-3038-11eb-989d-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/financial-report",
+    "metadata": {
+      "title": "Financial Report with DDK",
+      "description": "<p>This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Financial,Report,Snapshot Engine,Job Queue,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "high-dimensional-plotting",
+    "thumbnailUrl": "/Manager/apps_data/high-dimensional-plotting/thumbnail_f87bb940-3038-11eb-a1a2-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/high-dimensional-plotting",
+    "metadata": {
+      "title": "High Dimensional Plotting",
+      "description": "<p>Inspired by Facebook Reseach's [HiPlot](https://facebookresearch.github.io/hiplot/), this application helps AI researchers discover correlations and patterns in high-dimensional data using parallel coordinates plots, editable data tables, and crossfiltering.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit,AI",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "inventory-competitive-analysis",
+    "thumbnailUrl": "/Manager/apps_data/inventory-competitive-analysis/thumbnail_d6018704-3fe8-11eb-989d-0242ac110014.jpeg",
+    "urlOnServer": "https://dash-gallery.plotly.host/inventory-competitive-analysis",
+    "metadata": {
+      "title": "Online Inventory Competitive Analysis",
+      "description": "<p>&nbsp;This app uses Scrapy, a Python web-crawling framework, to mine data from multiple websites for top-rated products, price changes, and website position. Dash easily displays this information and empowers companies to optimize their market position in real-time. Dash Enterprise&nbsp;<a href=\"https://plotly.com/dash/design-kit/\" rel=\"noopener noreferrer\" target=\"_blank\">Design Kit</a> lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this,&nbsp;<a href=\"https://go.plotly.com/company-lookup\" rel=\"noopener noreferrer\" target=\"_blank\">find out</a>&nbsp;if your company uses Dash Enterprise or&nbsp;<a href=\"https://plotly.com/get-demo/\" rel=\"noopener noreferrer\" target=\"_blank\">request a demo</a>&nbsp;today&nbsp;</p>",
+      "tags": "Design Kit,Retail",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "ml-training",
+    "thumbnailUrl": "/Manager/apps_data/ml-training/thumbnail_5b602a1e-3039-11eb-9108-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/ml-training",
+    "metadata": {
+      "title": "Customer Review Machine Learning Training",
+      "description": "<p>This app uses a sklearn algorithm called <a href=\"https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html\" rel=\"noopener noreferrer\" target=\"_blank\">GradientBoostingClassifier</a> that essentially builds a collection of trees iteratively. It starts by building one tree, looks at where the tree fails to perform, and then creates a new tree that would \"correct\" those error and combine their predictions. The \"correctness\" of the model so far is computed using the gradient (a vector version of the derivative) which tells the model if it's going into the \"right direction.\"</p>\n<p>This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "ML,Design Kit,Snapshot Engine,Job Queue,Retail",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "named-entity-recognition",
+    "thumbnailUrl": "/Manager/apps_data/named-entity-recognition/thumbnail_6158186e-3039-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/named-entity-recognition",
+    "metadata": {
+      "title": "Named Entity Recognition",
+      "description": "<p>An NLP app that uses Spacy to perform named entity recognition, trained on Wikipedia and OntoNotes datasets.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "NLP,ML,Design Kit,Speech Recognition",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "portfolio-app",
+    "thumbnailUrl": "/Manager/apps_data/portfolio-app/thumbnail_6612480c-3039-11eb-a1a2-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/portfolio-app",
+    "metadata": {
+      "title": "Portfolio App",
+      "description": "<p>This portfolio application generates a printable 16 page report.</p>\n<p>This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Financial,Report,Job Queue,Snapshot Engine,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "product-playbook",
+    "thumbnailUrl": "/Manager/apps_data/product-playbook/thumbnail_f8c0599e-35b8-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/product-playbook",
+    "metadata": {
+      "title": "Product Playbook",
+      "description": "<p>A full-fledged application illustrating the depth of capabailities of a Dash app: Nested tabs, a multitude of visuals, dynamic filtering, location data, and tabular data.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit,Retail",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "retail-demand-transference",
+    "thumbnailUrl": "/Manager/apps_data/retail-demand-transference/thumbnail_0dfbf748-3fdf-11eb-9ce5-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/retail-demand-transference",
+    "metadata": {
+      "title": "Retail Demand Transference",
+      "description": "<p>&nbsp;This app visualizes demand transference predictions based on transactional log data, store attributes, and external sources. It adjusts for pricing, stock, and seasonality to help retailers determine and adjust to the relative level of demand of items. This application was built using Dash Enterprise&nbsp;<a href=\"https://plotly.com/dash/design-kit/\" rel=\"noopener noreferrer\" target=\"_blank\">Design Kit</a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this,&nbsp;<a href=\"https://go.plotly.com/company-lookup\" rel=\"noopener noreferrer\" target=\"_blank\">find out</a>&nbsp;if your company uses Dash Enterprise or&nbsp;<a href=\"https://plotly.com/get-demo/\" rel=\"noopener noreferrer\" target=\"_blank\">request a demo</a>&nbsp;today&nbsp;</p>",
+      "tags": "Retail,Snapshot Engine,Design Kit",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": null,
+        "email": null,
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "sku-analytics",
+    "thumbnailUrl": "/Manager/apps_data/sku-analytics/thumbnail_73141094-3039-11eb-bffb-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/sku-analytics",
+    "metadata": {
+      "title": "SKU Product Availability",
+      "description": "<p>This Dash app monitors SKU product availability by product, supplier, and store region. It also allows stores to track daily distribution and future inventory predictions.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Retail,Design Kit,Shipping & Delivery",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "transport-routes-analysis",
+    "thumbnailUrl": "/Manager/apps_data/transport-routes-analysis/thumbnail_79d9be38-3039-11eb-b046-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/transport-routes-analysis",
+    "metadata": {
+      "title": "Transport Routes Analysis",
+      "description": "<p>This app uses Dash to visualize and analyze warehouse transportation routes, including monitoring route optimizations, marked OTIF spots, and more.</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Retail,Transportation,Shipping & Delivery,Design Kit,Geospatial",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  },
+  {
+    "name": "usa-gov-analytics",
+    "thumbnailUrl": "/Manager/apps_data/usa-gov-analytics/thumbnail_7f6c615c-3039-11eb-bdfa-0242ac110014.png",
+    "urlOnServer": "https://dash-gallery.plotly.host/usa-gov-analytics",
+    "metadata": {
+      "title": "USA Government Analytics",
+      "description": "<p>This app retrieves real-time web site traffic from the USA government's API.&nbsp;</p>\n<p>&nbsp;This application was built using Dash Enterprise <a href=\"https://plotly.com/dash/design-kit/\"><u>Design Kit</u></a>, which lets you easily arrange, style and customize Dash apps so that they can be deployed in no time. If you want to build apps like this, <a href=\"https://go.plotly.com/company-lookup\"><u>find out</u></a> if your company uses Dash Enterprise or <a href=\"https://plotly.com/get-demo/\"><u>request a demo</u></a> today.&nbsp;</p>",
+      "tags": "Design Kit,Streaming",
+      "permissionLevel": "unauthenticated",
+      "showInPortal": true,
+      "contact": {
+        "name": "",
+        "email": "",
+        "__typename": "Contact"
+      },
+      "sortRank": null,
+      "__typename": "AppMetaData"
+    },
+    "__typename": "App"
+  }
+]
+
+
+$.each(dummy_data, function(index, value){
+    var image_url = 'https://dash-gallery.plotly.host' + value.thumbnailUrl
+    $("#main_containt").append('<div class="column"><a target="blank" href="'+value.urlOnServer+'"><img class="image" style="width: 100%;height: 90%;" src="'+image_url+'" /></a><p id="'+value.metadata.title+'" class="showPopup" style="cursor:pointer;">'+ value.metadata.title +'</p></div>');
+});
+$(".showPopup").on("click", function () {
+   var clickedBtnID = $(this).attr('id');
+   $.each(dummy_data, function(index, value){
+        if(clickedBtnID == value.metadata.title){
+            $("#popupDetails1").empty();
+            $(".popUpHeader").empty();
+            $("#description").empty();
+            $("#openApp").empty();
+
+            $("#popupDetails1").append('<img style="width: 100%;height: 90%;" src="https://dash-gallery.plotly.host'+value.thumbnailUrl+'" />');
+            $(".popUpHeader").append(clickedBtnID);
+            $("#description").append(value.metadata.description);
+            $("#openApp").attr("onclick", "window.open('"+value.urlOnServer+"')");
+            $("#openApp").text("Open App");
+            
+        }
+    });
+    document.getElementById("myModal").style.display = "block";
+});
+var popupCloseButton = document.getElementsByClassName("close")[0];
+popupCloseButton.onclick = function() {
+    document.getElementById("myModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
